@@ -40,17 +40,22 @@
 			}
 		}
 
-		function animate() {
-			requestAnimationFrame(animate);
+		let timeStamp: DOMHighResTimeStamp;
+		function animate(t: DOMHighResTimeStamp) {
+			if (!timeStamp) timeStamp = t;
 
 			resizeCanvasToDisplaySize();
 
-			cube.rotation.x += 0.01;
-			cube.rotation.y += 0.01;
+			if (t - timeStamp >= 16) {
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
 
+				timeStamp = t;
+			}
+			requestAnimationFrame(animate);
 			renderer.render(scene, camera);
 		}
-		animate();
+		requestAnimationFrame(animate);
 	});
 </script>
 
