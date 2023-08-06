@@ -1,2 +1,10 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<div id="container">
+    <h1>Brendan's Website</h1>
+    <p>WIP</p>
+</div>
+<style>
+#container {
+    margin-left: 1.5vw;
+    margin-right: 1.5vw;
+}
+</style>
