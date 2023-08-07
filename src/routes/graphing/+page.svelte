@@ -14,6 +14,7 @@
 		);
 
 		const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+		renderer.setPixelRatio(devicePixelRatio)
 		// renderer.setClearColor(0xffffff)
 
 		const geometry = new THREE.BoxGeometry(1, 1, 1);
