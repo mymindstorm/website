@@ -19,19 +19,19 @@
 			start: -10,
 			end: 10
 		}
-	}
+	};
 	let resolution = 45;
-	let showGrid = false
+	let showGrid = false;
 
 	interface Domain {
 		x: {
-			start: number
-			end: number
-		},
+			start: number;
+			end: number;
+		};
 		y: {
-			start: number,
-			end: number
-		}
+			start: number;
+			end: number;
+		};
 	}
 
 	// Parse expr
@@ -44,7 +44,7 @@
 			const newExprVars = newExpr.variables();
 
 			if (
-				(newExprVars.length === 2 && (newExprVars.includes('x') && newExprVars.includes('y'))) ||
+				(newExprVars.length === 2 && newExprVars.includes('x') && newExprVars.includes('y')) ||
 				(newExprVars.length === 1 && (newExprVars.includes('x') || newExprVars.includes('y'))) ||
 				newExprVars.length === 0
 			) {
@@ -66,55 +66,55 @@
 		0.1,
 		2000
 	);
-	camera.position.z = 19
-	camera.position.y = -21
+	camera.position.z = 19;
+	camera.position.y = -21;
 
 	let surface: THREE.Mesh;
 	$: {
-		scene.remove(surface)
-		surface = createSurfaceMesh(parsedExpr, resolution, domain)
+		scene.remove(surface);
+		surface = createSurfaceMesh(parsedExpr, resolution, domain);
 		scene.add(surface);
 	}
 
-	let xGrid: THREE.GridHelper
+	let xGrid: THREE.GridHelper;
 	$: {
-		scene.remove(xGrid)
+		scene.remove(xGrid);
 
 		if (showGrid) {
 			const rangeX = Math.abs(domain.x.end - domain.x.start);
 
-			const gridSize = Math.ceil(Math.max(rangeX)) + 2
-			xGrid = new THREE.GridHelper(gridSize, gridSize)
+			const gridSize = Math.ceil(Math.max(rangeX)) + 2;
+			xGrid = new THREE.GridHelper(gridSize, gridSize);
 
-			const boundBox = new THREE.Box3().setFromObject(surface)
-			boundBox.getCenter(xGrid.position)
-			xGrid.position.setComponent(1, domain.y.end + 1)
+			const boundBox = new THREE.Box3().setFromObject(surface);
+			boundBox.getCenter(xGrid.position);
+			xGrid.position.setComponent(1, domain.y.end + 1);
 
-			scene.add(xGrid)
+			scene.add(xGrid);
 		}
 	}
 
-	let yGrid: THREE.GridHelper
+	let yGrid: THREE.GridHelper;
 	$: {
-		scene.remove(yGrid)
+		scene.remove(yGrid);
 
 		if (showGrid) {
 			const rangeY = Math.abs(domain.y.end - domain.y.start);
 
-			const gridSize = Math.ceil(Math.max(rangeY)) + 2
-			yGrid = new THREE.GridHelper(gridSize, gridSize)
+			const gridSize = Math.ceil(Math.max(rangeY)) + 2;
+			yGrid = new THREE.GridHelper(gridSize, gridSize);
 
-			const boundBox = new THREE.Box3().setFromObject(surface)
-			yGrid.rotateZ(Math.PI/2)
-			boundBox.getCenter(yGrid.position)
-			yGrid.position.setComponent(0, domain.x.start - 1)
+			const boundBox = new THREE.Box3().setFromObject(surface);
+			yGrid.rotateZ(Math.PI / 2);
+			boundBox.getCenter(yGrid.position);
+			yGrid.position.setComponent(0, domain.x.start - 1);
 
-			scene.add(yGrid)
+			scene.add(yGrid);
 		}
 	}
 
 	function createSurfaceMesh(exp: Expression, resolution: number, domain: Domain) {
-		const geometry = new ParametricGeometry(getParametricExpr(exp, domain), resolution, resolution)
+		const geometry = new ParametricGeometry(getParametricExpr(exp, domain), resolution, resolution);
 		const material = new THREE.MeshNormalMaterial();
 		material.side = THREE.DoubleSide;
 		const surface = new THREE.Mesh(geometry, material);
@@ -124,24 +124,27 @@
 
 	// Three uses u and v parameters from 0 to 1.
 	// We need to scale this to the x-y coord system.
-	function getParametricExpr(exp: Expression, domain: Domain): (u: number, v: number, target: THREE.Vector3) => void {
+	function getParametricExpr(
+		exp: Expression,
+		domain: Domain
+	): (u: number, v: number, target: THREE.Vector3) => void {
 		return function parametricExprHelper(u: number, v: number, outVec: THREE.Vector3): void {
 			const rangeX = Math.abs(domain.x.end - domain.x.start);
 			const rangeY = Math.abs(domain.y.end - domain.y.start);
 
 			const x = rangeX * u + domain.x.start;
 			const y = rangeY * v + domain.y.start;
-			const z = exp.evaluate({ x, y })
+			const z = exp.evaluate({ x, y });
 
-			outVec.set(x, y, z)
-		}
+			outVec.set(x, y, z);
+		};
 	}
 
 	onMount(() => {
 		const controls = new OrbitControls(camera, canvas);
 		const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 		renderer.setPixelRatio(devicePixelRatio);
-		renderer.setClearColor(0xffffff)
+		renderer.setClearColor(0xffffff);
 
 		function resizeCanvasToDisplaySize() {
 			const canvas = renderer.domElement;
@@ -173,34 +176,38 @@
 
 <div id="container">
 	<div id="header">
-		<h1>Surface Graphing Tool</h1>
-		<div>
-			<div>
-				<label for="expr">Expression</label>
-				<input bind:value={expr} id="expr" />
+		<h1>
+			Surface Graphing Tool - <a
+				href="https://github.com/mymindstorm/website/blob/master/src/routes/graphing/%2Bpage.svelte"
+				>Source Code</a
+			>
+		</h1>
+		<div id="controls">
+			<div id="expression">
+				<div>Expression</div>
+				<input bind:value={expr} />
 			</div>
-			<div>
-				<label for="resolution">Resolution</label>
-				<input type="range" min="1" max="100" bind:value={resolution} id="resolution">
+			<div id="resolution">
+				<div>Resolution</div>
+				<input type="range" min="1" max="100" bind:value={resolution} />
 			</div>
-			<div>
-				Domain
-				<div>
-					x from
+			<div id="grid">
+				<div>Show Grid</div>
+				<input type="checkbox" bind:checked={showGrid} />
+			</div>
+			<div id="domain">
+				<div style="margin-bottom: 8px">
+					Graph x from
 					<input type="number" bind:value={domain.x.start} />
 					to
 					<input type="number" bind:value={domain.x.end} />
 				</div>
 				<div>
-					y from
+					Graph y from
 					<input type="number" bind:value={domain.y.start} />
 					to
-					<input type="number" bind:value={domain.y.end}/>
+					<input type="number" bind:value={domain.y.end} />
 				</div>
-			</div>
-			<div>
-				<label for="grid">Show Grid</label>
-				<input type="checkbox" bind:checked={showGrid} id="grid">
 			</div>
 		</div>
 	</div>
@@ -224,4 +231,30 @@
 		height: 100%;
 	}
 
+	#controls {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, 33%);
+		grid-auto-rows: min-content;
+		gap: 8px;
+		grid-auto-flow: row;
+	}
+
+	#expression {
+		grid-column: span 1;
+		grid-row: span 1;
+	}
+
+	#resolution {
+		grid-column: span 1;
+		grid-row: span 1;
+	}
+
+	#grid {
+		grid-column: span 1;
+		grid-row: span 1;
+	}
+	#domain {
+		grid-column: span 3;
+		grid-row: span 1;
+	}
 </style>
