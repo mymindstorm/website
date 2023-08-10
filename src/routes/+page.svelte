@@ -5,7 +5,7 @@
 
 <style>
 	#container {
-		margin-left: 1.5vw;
-		margin-right: 1.5vw;
+		margin-left: 16px;
+		margin-right: 16px;
 	}
 </style>
