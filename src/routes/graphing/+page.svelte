@@ -185,7 +185,7 @@
 		<div id="controls">
 			<div id="expression">
 				<div>Expression</div>
-				<input bind:value={expr} />
+				<input class:bad-input={!validExpr} bind:value={expr} />
 			</div>
 			<div id="resolution">
 				<div>Resolution</div>
@@ -256,5 +256,11 @@
 	#domain {
 		grid-column: span 3;
 		grid-row: span 1;
+	}
+
+	.bad-input {
+		outline: 2px solid red;
+		border: none;
+		border-radius: 5px;
 	}
 </style>
